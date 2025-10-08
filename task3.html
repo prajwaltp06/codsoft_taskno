@@ -1,8 +1,3 @@
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +6,8 @@
   <title>Basic Calculator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #1a1a1a, #000);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -20,22 +15,23 @@
     }
 
     .calculator {
-      background: #222;
+      background: #111;
       padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
-      width: 260px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0, 255, 100, 0.2);
+      width: 280px;
     }
 
     .display {
       background: #000;
       color: #0f0;
-      font-size: 24px;
+      font-size: 26px;
       padding: 15px;
       text-align: right;
       border-radius: 10px;
       margin-bottom: 20px;
       overflow-x: auto;
+      box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
     }
 
     .buttons {
@@ -50,30 +46,38 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background: #444;
+      background: #333;
       color: white;
-      transition: 0.2s;
+      transition: all 0.2s ease;
     }
 
     button:hover {
-      background: #666;
+      background: #444;
+      transform: scale(1.05);
     }
 
     .equal {
       grid-column: span 2;
-      background: #4CAF50;
+      background: #28a745;
     }
 
     .equal:hover {
-      background: #45a049;
+      background: #218838;
     }
 
     .clear {
-      background: #e74c3c;
+      background: #dc3545;
     }
 
     .clear:hover {
-      background: #c0392b;
+      background: #c82333;
+    }
+
+    /* Responsive design */
+    @media (max-width: 400px) {
+      .calculator {
+        width: 90%;
+      }
     }
   </style>
 </head>
@@ -114,29 +118,42 @@
     const buttons = document.querySelectorAll('button');
     let currentInput = "";
 
+    // Handle button clicks
     buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        const value = button.textContent;
-
-        if (value === "C") {
-          currentInput = "";
-          display.textContent = "0";
-        } 
-        else if (value === "=") {
-          try {
-            currentInput = eval(currentInput).toString();
-            display.textContent = currentInput;
-          } catch {
-            display.textContent = "Error";
-            currentInput = "";
-          }
-        } 
-        else {
-          currentInput += value;
-          display.textContent = currentInput;
-        }
-      });
+      button.addEventListener('click', () => handleInput(button.textContent));
     });
+
+    // Handle keyboard input
+    document.addEventListener('keydown', e => {
+      const key = e.key;
+      if (/[\d+\-*/.=]|Enter|Backspace|c/i.test(key)) {
+        if (key === 'Enter') handleInput('=');
+        else if (key.toLowerCase() === 'c' || key === 'Backspace') handleInput('C');
+        else handleInput(key);
+      }
+    });
+
+    function handleInput(value) {
+      if (value === "C") {
+        currentInput = "";
+        display.textContent = "0";
+      } 
+      else if (value === "=") {
+        try {
+          currentInput = eval(currentInput).toString();
+          display.textContent = currentInput;
+        } catch {
+          display.textContent = "Error";
+          currentInput = "";
+        }
+      } 
+      else {
+        // Prevent invalid sequences like ".." or "++"
+        if (/[\+\-\*\/\.]{2}$/.test(currentInput + value)) return;
+        currentInput += value;
+        display.textContent = currentInput;
+      }
+    }
   </script>
 
 </body>
